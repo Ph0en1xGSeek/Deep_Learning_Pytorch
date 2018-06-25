@@ -184,4 +184,78 @@ class AttnDecoderRNN(nn.Module):
     def initHidden(self):
         return torch.zeros(1, 1, self.hidden_size, device=device)
 
-        
+def indexesFromSentence(lang, sentence):
+    return [lang.word2index[word] for word in sentence.split(' ')]
+
+def tensorFromSentence(lang, sentence):
+    indexes = indexesFromSentence(langm sentence)
+    indexes.append(EOS_token)
+    return torch.tensor(indexes, dtype=torch.long, device=device).view(-1, 1)
+
+def tensorsFromPair(pair):
+    input_tensor = tensorFromSentence(input_lang, pair[0])
+    target_tensor = tensorFromSentence(output_lang, pair[1])
+    return (input_tensor, target_tensor)
+
+teacher_forcing_ratio = 0.5
+
+def train(input_tensor, target_tensor, encoder, decoder,
+            encoder_optimizer, decoder_optimizer, criterion,
+            max_length=MAX_LENGTH):
+    
+    encoder_hidden = encoder.initHidden()
+    encoder_optimizer.zero_grad()
+    decoer_optimizer.zero_grad()
+
+    # ?[0]
+    input_length = input_tensor.size(0)
+    output_length = output_tensor.size(0)
+
+    encoder_outputs = torch.zeros(max_length, encoder.hidden, device=device)
+
+    loss = 0
+
+    for ei in range(input_length):
+        encoder_output, encoder_hidden = encoder(
+            input_tensor[ei], encoder_hidden
+        )
+        # collect the last output of the encoder
+        encoder_outputs[ei] = encoder_output[0, 0]
+
+    decoder_input = torch.tensor([[SOS_token]], device=device)
+
+    decoder_hidden = encoder_hidden
+
+    use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
+
+    if use_teacher_forcing:
+        # Feed the decoder with the target sentence
+        for di in range(target_length):
+            decoder_output, decoder_hidden, decoder_attention = decoder(
+                decoder_input, decoder_hidden, encoder_outputs
+            )
+            loss += criterion(decoder_output, target_tensor[di])
+            # teacher forcing
+            decoder_input = target_tensor[di]
+    else:
+        # Feed the decoder with the prediction of the last step
+        for di in range(targe_lenth):
+            decoder_output, decoder_hidden, decoder_attention = decoder(
+                decoder_input, decoder_hidden, encoder_outputs
+            )
+            # get the k-largest element in the tensor and their indexes
+            topv, topi = decoder_output.topk(1)
+            decoder_input = topi.squeeze().detach()
+
+            loss += criterion(decoder_output, target_tensor[di])
+            if decoder_input.item() == EOS_token:
+                break
+    loss.backward()
+
+    encoder_optimizer.step()
+    decoder_optimizer.step()
+
+    return loss.item() / targer_length
+
+
+
