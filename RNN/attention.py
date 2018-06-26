@@ -10,6 +10,8 @@ import torch.nn as nn
 from torch import optim
 import torch.nn.functional as F
 
+
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 SOS_token = 0
@@ -151,10 +153,10 @@ class AttnDecoderRNN(nn.Module):
         super(AttnDecoderRNN, self).__init__()
         self.hidden_size = hidden_size
         self.output_size = output_size
-        self.output_p = output_p
+        self.dropout_p = dropout_p
         self.max_length = max_length
 	
-	    self.embedding = nn.Embedding(self.output_size, self.hidden_size)
+        self.embedding = nn.Embedding(self.output_size, self.hidden_size)
         self.attn = nn.Linear(self.hidden_size*2, self.max_length)
         self.attn_combine = nn.Linear(self.hidden_size*2, self.hidden_size)
         self.dropout = nn.dropout(self.dropout_p)
@@ -188,7 +190,7 @@ def indexesFromSentence(lang, sentence):
     return [lang.word2index[word] for word in sentence.split(' ')]
 
 def tensorFromSentence(lang, sentence):
-    indexes = indexesFromSentence(langm sentence)
+    indexes = indexesFromSentence(lang, sentence)
     indexes.append(EOS_token)
     return torch.tensor(indexes, dtype=torch.long, device=device).view(-1, 1)
 
@@ -205,11 +207,11 @@ def train(input_tensor, target_tensor, encoder, decoder,
     
     encoder_hidden = encoder.initHidden()
     encoder_optimizer.zero_grad()
-    decoer_optimizer.zero_grad()
+    decoder_optimizer.zero_grad()
 
     # ?[0]
     input_length = input_tensor.size(0)
-    output_length = output_tensor.size(0)
+    target_length = target_tensor.size(0)
 
     encoder_outputs = torch.zeros(max_length, encoder.hidden, device=device)
 
@@ -239,7 +241,7 @@ def train(input_tensor, target_tensor, encoder, decoder,
             decoder_input = target_tensor[di]
     else:
         # Feed the decoder with the prediction of the last step
-        for di in range(targe_lenth):
+        for di in range(target_length):
             decoder_output, decoder_hidden, decoder_attention = decoder(
                 decoder_input, decoder_hidden, encoder_outputs
             )
@@ -255,7 +257,24 @@ def train(input_tensor, target_tensor, encoder, decoder,
     encoder_optimizer.step()
     decoder_optimizer.step()
 
-    return loss.item() / targer_length
+    return loss.item() / target_length
+
+import time
+import math
+
+def asMinutes(s):
+    m = math.floor(s/60)
+    s -= m * 60
+    return '%dm %ds' % (m, s)
+
+def timeSince(since, percent):
+    now = time.time()
+    s = now - since
+    es = s / (percent)
+    rs = es - s
+    return '%s (- %s)' % (asMinutes(s), asMinutes(rs))
+
+
 
 
 
