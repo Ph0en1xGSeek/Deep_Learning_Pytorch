@@ -329,4 +329,11 @@ def evaluate(encoder, decoder, sentence, max_length=MAX_LENGTH):
         input_length = input_tensor.size()[0]
         encoder_hidden = encoder.initHidden()
 
+        encoder_outputs = torch.zeros(max_length, encoder.hidden_size, device=device)
+        for ei in range(intput_length):
+            encoder_output, encoder_hidden = encoder(input_tensor[ei], encoder_hidden)
+            encoder_output[ei] += encoder_output[0, 0]
+            
+
+
         
