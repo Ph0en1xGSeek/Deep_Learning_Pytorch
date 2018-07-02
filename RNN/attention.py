@@ -169,7 +169,7 @@ class AttnDecoderRNN(nn.Module):
 
         attn_weights = F.softmax(
             self.attn(torch.cat((embedded[0], hidden[0]), 1)),
-            dim = 1
+            dim=1
         )
 
         attn_applied = torch.bmm(attn_weights.unsqueeze(0), encoder_outputs.unsqueeze(0))
@@ -330,7 +330,7 @@ def evaluate(encoder, decoder, sentence, max_length=MAX_LENGTH):
         encoder_hidden = encoder.initHidden()
 
         encoder_outputs = torch.zeros(max_length, encoder.hidden_size, device=device)
-        for ei in range(intput_length):
+        for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(input_tensor[ei], encoder_hidden)
             encoder_output[ei] += encoder_output[0, 0]
             
