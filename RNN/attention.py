@@ -1,3 +1,4 @@
+# coding: utf-8
 from __future__ import unicode_literals, print_function, division
 from io import open
 import unicodedata
@@ -106,7 +107,7 @@ def prepareData(lang1, lang2, reverse=False):
     print(output_lang.name, output_lang.n_words)
     return input_lang, output_lang, pairs
 
-
+# French to English
 input_lang, output_lang, pairs = prepareData('eng', 'fra', True)
 print(random.choice(pairs))
 
@@ -119,6 +120,8 @@ class EncoderRNN(nn.Module):
         self.gru = nn.GRU(hidden_size, hidden_size)
 
     def forward(self, input, hidden):
+        # 虽然GRU自带成串 但这里每次只用一个GRU单元 自己重复执行连成串
+        # (1, 1, hidden_size)
         embedded = self.embedding(input).view(1, 1, -1)
         output = embedded
         output, hidden = self.gru(output, hidden)
@@ -138,6 +141,7 @@ class DecoderRNN(nn.Module):
         self.softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, input, hidden):
+        # (1, 1, hidden_size)
         output = self.embedding(input).view(1, 1, -1)
         output = F.relu(output)
         output, hidden = self.gru(output, hidden)
@@ -155,23 +159,27 @@ class AttnDecoderRNN(nn.Module):
         self.output_size = output_size
         self.dropout_p = dropout_p
         self.max_length = max_length
-	
+
         self.embedding = nn.Embedding(self.output_size, self.hidden_size)
         self.attn = nn.Linear(self.hidden_size*2, self.max_length)
         self.attn_combine = nn.Linear(self.hidden_size*2, self.hidden_size)
-        self.dropout = nn.dropout(self.dropout_p)
+        self.dropout = nn.Dropout(self.dropout_p)
         self.gru = nn.GRU(self.hidden_size, self.hidden_size)
         self.out = nn.Linear(self.hidden_size, self.output_size)
 
-    def froward(self, input, hidden, encoder_outputs):
+    def forward(self, input, hidden, encoder_outputs):
+        # (1, 1, hidden_size)
         embedded = self.embedding(input).view(1, 1, -1)
         embedded = self.dropout(embedded)
 
         attn_weights = F.softmax(
+            # (1, 2*hidden_size) -> (1, max_length)
             self.attn(torch.cat((embedded[0], hidden[0]), 1)),
             dim=1
         )
 
+        # Apply the attention weight(按位乘?)
+        # (1, 1, max_length) * (1, max_length, hidden_size)
         attn_applied = torch.bmm(attn_weights.unsqueeze(0), encoder_outputs.unsqueeze(0))
 
         output = torch.cat((embedded[0], attn_applied[0]), 1)
@@ -209,11 +217,10 @@ def train(input_tensor, target_tensor, encoder, decoder,
     encoder_optimizer.zero_grad()
     decoder_optimizer.zero_grad()
 
-    # ?[0]
     input_length = input_tensor.size(0)
     target_length = target_tensor.size(0)
 
-    encoder_outputs = torch.zeros(max_length, encoder.hidden, device=device)
+    encoder_outputs = torch.zeros(max_length, encoder.hidden_size, device=device)
 
     loss = 0
 
@@ -316,10 +323,8 @@ import numpy as np
 
 def showPlot(points):
     plt.figure()
-    fig, ax = plt.subplots()
-    loc = ticker.MultipleLocator(base=0.2)
-    ax.yaxis.set_major_locator(loc)
     plt.plot(points)
+    plt.show()
 
 
 
@@ -332,7 +337,7 @@ def evaluate(encoder, decoder, sentence, max_length=MAX_LENGTH):
         encoder_outputs = torch.zeros(max_length, encoder.hidden_size, device=device)
         for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(input_tensor[ei], encoder_hidden)
-            encoder_output[ei] += encoder_output[0, 0]
+            encoder_outputs[ei] += encoder_output[0, 0]
 
 
         decoder_input = torch.tensor([[SOS_token]], device=device)
@@ -355,4 +360,54 @@ def evaluate(encoder, decoder, sentence, max_length=MAX_LENGTH):
 
             decoder_input = topi.squeeze().detach()
         return decoded_words, decoder_attentions[:di+1]
+
+def evaluateRandomly(encoder, decoder, n=10):
+    for i in range(n):
+        pair = random.choice(pairs)
+        print('>', pair[0])
+        print('=', pair[1])
+        output_words, attentions = evaluate(encoder, decoder, pair[0])
+        output_sentence = ' '.join(output_words)
+        print('<', output_sentence)
+        print('')
+
+
+hidden_size = 256
+encoder1 = EncoderRNN(input_lang.n_words, hidden_size).to(device)
+attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1).to(device)
+trainIters(encoder1, attn_decoder1, 75000, print_every=5000)
+evaluateRandomly(encoder1, attn_decoder1)
+
+def showAttention(input_sentence, output_words, attentions):
+    # Set up figure with color bar
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    cax = ax.matshow(attentions.numpy(), cmap='bone')
+    fig.colorbar(cax)
+
+    # Set up axes
+    ax.set_xticklabels([''] + input_sentence.split(' ') +
+                       ['<EOS>'], rotation=90)
+    ax.set_yticklabels([''] + output_words)
+
+    # Show label at every tick
+    ax.xaxis.set_major_locator(ticker.MultipleLocator(1))
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(1))
+
+    plt.show()
+
+def evaluateAndShow(input_sentence):
+    output_words, attentions = evaluate(
+        encoder1, attn_decoder1, input_sentence
+    )
+    print('input =', input_sentence)
+    print('output =', ' '.join(output_words))
+    showAttention(input_sentence, output_words, attentions)
+
+
+evaluateAndShow("elle a cinq ans de moins que moi .")
+
+
+
+
 
