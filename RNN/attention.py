@@ -178,7 +178,6 @@ class AttnDecoderRNN(nn.Module):
             dim=1
         )
 
-        # Apply the attention weight(按位乘?)
         # (1, 1, max_length) * (1, max_length, hidden_size)
         attn_applied = torch.bmm(attn_weights.unsqueeze(0), encoder_outputs.unsqueeze(0))
 
