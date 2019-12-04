@@ -2,14 +2,7 @@
 <project version="4">
   <component name="PublishConfigData">
     <serverData>
-      <paths name="pgs@114.212.83.147:22">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="pgs@172.26.34.207:22">
+      <paths name="pgs@114.212.84.54:22">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

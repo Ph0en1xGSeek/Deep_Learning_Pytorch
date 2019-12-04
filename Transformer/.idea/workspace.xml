@@ -2,30 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fb536a26-4815-4441-adfc-4986b9c89749" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/citeseer/citeseer_dw_init.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/citeseer/citeseer_line_direct_input.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/citeseer/feature.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/citeseer/graph.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/citeseer/group.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/cora/cora_dw_init.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/cora/cora_line_direct_input.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/pubmed/deal.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/pubmed/feature.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/pubmed/graph.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/pubmed/group.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/pubmed/pubmed.edgelist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/pubmed/pubmed.feature.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/pubmed/pubmed.label" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/pubmed/pubmed_dw_init.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/pubmed/pubmed_line_direct_input.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/wiki/feature.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/wiki/graph.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/wiki/group.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/wiki/tfidf.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/wiki/wiki_dw_init.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/data_new/wiki/wiki_line_direct_input.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/../TADW/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../TADW/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/../TADW/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TADW/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TADW/.idea/deployment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../TADW/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../TADW/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -75,10 +55,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="1">
-    <option name="x" value="-7" />
+  <component name="ProjectFrameBounds">
     <option name="width" value="974" />
-    <option name="height" value="1047" />
+    <option name="height" value="728" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -168,7 +147,7 @@
     <option name="totallyTimeSpent" value="10876000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="0" width="974" height="1047" extended-state="1" />
+    <frame x="0" y="0" width="974" height="728" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.13238512" />
