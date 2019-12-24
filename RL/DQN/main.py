@@ -148,7 +148,7 @@ def plot_durations():
     plt.clf()
     durations_t = torch.tensor(episode_durations, dtype=torch.float)
     plt.title("Training...")
-    plt.xlabel("Episide")
+    plt.xlabel("Episode")
     plt.ylabel("Duration")
     plt.plot(durations_t.numpy())
 
